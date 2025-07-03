@@ -3,7 +3,7 @@ import { Handle, Position } from 'reactflow';
 import type { CustomNodeProps } from '../../types';
 
 interface NodeConfig {
-  icon: JSX.Element;
+  icon: React.ReactElement;
   primaryColor: string;
   secondaryColor: string;
   handleClass: string;
@@ -59,7 +59,10 @@ const NodeComponent: React.FC<CustomNodeProps> = memo(({ data, selected }) => {
     }
   };
 
-  const config = nodeConfigs[data.type] || nodeConfigs.process;
+  const config = nodeConfigs[data.type || 'process'] || nodeConfigs.process;
+
+  // Type guard for extended properties
+  const extendedData = data as any;
 
   return (
     <div
@@ -111,7 +114,7 @@ const NodeComponent: React.FC<CustomNodeProps> = memo(({ data, selected }) => {
           
           {/* Node ID Badge */}
           <span className="text-[10px] font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-            #{data.id || 'node'}
+            #{extendedData.id || 'node'}
           </span>
         </div>
 
@@ -144,16 +147,16 @@ const NodeComponent: React.FC<CustomNodeProps> = memo(({ data, selected }) => {
             </h3>
             
             {/* Optional Description */}
-            {data.description && (
+            {extendedData.description && (
               <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                {data.description}
+                {extendedData.description}
               </p>
             )}
           </div>
         </div>
 
         {/* Bottom Section - Metadata */}
-        {(data.metadata || isHovered) && (
+        {(extendedData.metadata || isHovered) && (
           <div className={`
             mt-4 pt-3 border-t border-gray-100
             transition-all duration-300
@@ -161,10 +164,10 @@ const NodeComponent: React.FC<CustomNodeProps> = memo(({ data, selected }) => {
           `}>
             <div className="flex items-center justify-between text-xs">
               <span className="text-gray-500">
-                {data.metadata?.count || '0'} items
+                {extendedData.metadata?.count || '0'} items
               </span>
               <span className="text-gray-500">
-                {data.metadata?.status || 'Ready'}
+                {extendedData.metadata?.status || 'Ready'}
               </span>
             </div>
           </div>
@@ -223,11 +226,11 @@ const NodeComponent: React.FC<CustomNodeProps> = memo(({ data, selected }) => {
       )}
 
       {/* Interactive Tooltip */}
-      {isHovered && data.tooltip && (
+      {isHovered && extendedData.tooltip && (
         <div className="absolute -top-14 left-1/2 transform -translate-x-1/2 z-20">
           <div className="relative">
             <div className="px-3 py-2 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap shadow-xl">
-              {data.tooltip}
+              {extendedData.tooltip}
             </div>
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900" />
           </div>

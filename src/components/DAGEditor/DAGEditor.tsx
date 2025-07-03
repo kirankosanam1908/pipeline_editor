@@ -1,14 +1,17 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import ReactFlow, {
   Background,
   Controls,
+  Connection,
+  Edge,
   useNodesState,
   useEdgesState,
   addEdge,
+  Node,
+  useReactFlow,
   BackgroundVariant,
   Panel,
   NodeTypes,
-  useReactFlow,
 } from 'reactflow';
 import NodeComponent from '../NodeComponent/NodeComponent';
 import CustomControls from '../Controls/CustomControls';
@@ -39,7 +42,7 @@ const INITIAL_NODES: Node<NodeData>[] = [
 ];
 
 const DAGEditor: React.FC = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node<NodeData>[]>(INITIAL_NODES);
+  const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
   const [validation, setValidation] = useState({ isValid: true, message: '' });
   const [isJsonPreviewOpen, setIsJsonPreviewOpen] = useState(false);
@@ -70,7 +73,7 @@ const DAGEditor: React.FC = () => {
   );
 
   const handleAddNode = useCallback(() => {
-    const nodeTypes = ['input', 'process', 'output'];
+    const nodeTypes: Array<'input' | 'process' | 'output'> = ['input', 'process', 'output'];
     const type = nodeTypes[Math.floor(Math.random() * nodeTypes.length)];
     const label = prompt('Enter node name:');
     
@@ -85,14 +88,14 @@ const DAGEditor: React.FC = () => {
         },
       };
       
-      setNodes((nds) => [...nds, newNode]);
+      setNodes((nds) => [...nds, newNode] as Node[]);
       setTimeout(() => fitView({ padding: 0.2 }), 0);
     }
   }, [setNodes, fitView]);
 
   const handleAutoLayout = useCallback(() => {
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges);
-    setNodes([...layoutedNodes]);
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes as Node<NodeData>[], edges);
+    setNodes([...layoutedNodes] as Node[]);
     setEdges([...layoutedEdges]);
     setTimeout(() => fitView({ padding: 0.2 }), 0);
   }, [nodes, edges, setNodes, setEdges, fitView]);
@@ -121,7 +124,7 @@ const DAGEditor: React.FC = () => {
   }, [handleDeleteElements]);
 
   useEffect(() => {
-    const result = validateDAG(nodes, edges);
+    const result = validateDAG(nodes as Node<NodeData>[], edges);
     setValidation(result);
   }, [nodes, edges]);
 
@@ -254,7 +257,7 @@ const DAGEditor: React.FC = () => {
                 
                 <div className="space-y-2 text-sm">
                   {[
-                    { icon: "🖱️", color: "text-blue-600"},
+                    { icon: "🖱️", color: "text-blue-600", text: "Drag to move nodes" },
                     { icon: "🖱️", color: "text-blue-600", text: "Scroll to zoom" },
                     { icon: "✋", color: "text-green-600", text: "Drag to pan" },
                     { icon: "🗑️", color: "text-red-600", text: "Delete to remove" },
@@ -360,7 +363,7 @@ const DAGEditor: React.FC = () => {
               </div>
             </div>
             <div className="flex-1 overflow-hidden">
-              <JsonPreview nodes={nodes} edges={edges} />
+              <JsonPreview nodes={nodes as Node<NodeData>[]} edges={edges} />
             </div>
           </div>
         </div>
@@ -402,13 +405,13 @@ const DAGEditor: React.FC = () => {
               </div>
             </div>
             <div className="overflow-y-auto" style={{ maxHeight: 'calc(90vh - 88px)' }}>
-              <JsonPreview nodes={nodes} edges={edges} />
+              <JsonPreview nodes={nodes as Node<NodeData>[]} edges={edges} />
             </div>
           </div>
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         @keyframes slide-up {
           from {
             transform: translateY(100%);
@@ -441,4 +444,4 @@ const DAGEditor: React.FC = () => {
   );
 };
 
-export default DAGEditor;                                         
+export default DAGEditor;

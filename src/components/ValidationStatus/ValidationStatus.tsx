@@ -74,7 +74,7 @@ const ValidationStatus: React.FC<ValidationStatusProps> = ({ isValid, message })
       )}
 
       {/* Mobile Compact Version */}
-      <style jsx>{`
+      <style>{`
         @media (max-width: 640px) {
           .text-xs {
             display: none;
@@ -168,7 +168,7 @@ export const ValidationStatusCompact: React.FC<ValidationStatusProps> = ({ isVal
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in {
           from {
             opacity: 0;
