@@ -2,16 +2,13 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
   Background,
   Controls,
-  Connection,
-  Edge,
   useNodesState,
   useEdgesState,
   addEdge,
-  Node,
-  useReactFlow,
   BackgroundVariant,
   Panel,
   NodeTypes,
+  useReactFlow,
 } from 'reactflow';
 import NodeComponent from '../NodeComponent/NodeComponent';
 import CustomControls from '../Controls/CustomControls';
